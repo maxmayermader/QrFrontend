@@ -18,7 +18,7 @@ const QRCodeGenerator: Component = () => {
 
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/qrcode?data=${encodeURIComponent(url())}`,
+        `https://qr-backend-virid.vercel.app/qrcode?data=${encodeURIComponent(url())}`,
         {
           responseType: "blob",
         }
@@ -42,7 +42,7 @@ const QRCodeGenerator: Component = () => {
 
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/qrcode?data=${encodeURIComponent(
+        `https://qr-backend-virid.vercel.app/qrcode?data=${encodeURIComponent(
           url()
         )}&fill_color=${encodeURIComponent(
           fillColor()
