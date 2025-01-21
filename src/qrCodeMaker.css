@@ -1,0 +1,68 @@
+.qr-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    padding: 2rem;
+  }
+  
+  input {
+    width: 300px;
+    padding: 0.5rem;
+  }
+  
+  button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+  }
+  
+  img {
+    max-width: 256px;
+    margin-top: 1rem;
+  }
+  
+  .error {
+    color: red;
+  }
+
+  .count {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .advanced-toggle {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 0.5rem;
+    text-align: left;
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+  
+  .advanced-options {
+    background: #f5f5f5;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .color-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .color-option label {
+    min-width: 120px;
+  }
+  
+  .color-option input[type="color"] {
+    padding: 0;
+    width: 50px;
+    height: 30px;
+  }
+  
