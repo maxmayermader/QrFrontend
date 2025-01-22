@@ -64,7 +64,7 @@ const QRCodeGenerator: Component = () => {
 
   const fetchCount = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/count");
+      const response = await axios.get("https://qr-backend-virid.vercel.app/count");
       setCount(response.data);
     } catch (err) {
       console.error("Failed to fetch count:", err);
