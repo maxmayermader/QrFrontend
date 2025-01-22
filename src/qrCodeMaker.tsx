@@ -1,6 +1,8 @@
 import { createSignal, Component, Show } from "solid-js";
 import axios from "axios";
 
+const API_URL = import.meta.env.API_URL
+
 const QRCodeGenerator: Component = () => {
   const [url, setUrl] = createSignal("");
   const [qrImage, setQrImage] = createSignal<string>("");
@@ -18,7 +20,7 @@ const QRCodeGenerator: Component = () => {
 
     try {
       const response = await axios.get(
-        `https://qr-backend-virid.vercel.app/qrcode?data=${encodeURIComponent(url())}`,
+        `${API_URL}/qrcode?data=${encodeURIComponent(url())}`,
         {
           responseType: "blob",
         }
@@ -42,7 +44,7 @@ const QRCodeGenerator: Component = () => {
 
     try {
       const response = await axios.get(
-        `https://qr-backend-virid.vercel.app/qrcode?data=${encodeURIComponent(
+        `${API_URL}/qrcode?data=${encodeURIComponent(
           url()
         )}&fill_color=${encodeURIComponent(
           fillColor()
@@ -64,7 +66,7 @@ const QRCodeGenerator: Component = () => {
 
   const fetchCount = async () => {
     try {
-      const response = await axios.get("https://qr-backend-virid.vercel.app/count");
+      const response = await axios.get(API_URL+"/count");
       setCount(response.data);
     } catch (err) {
       console.error("Failed to fetch count:", err);
