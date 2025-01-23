@@ -1,7 +1,10 @@
 import { createSignal, Component, Show } from "solid-js";
 import axios from "axios";
+import LoadingCounter from "./components/loading";
+import Spinner from "./components/spinner";
 
-const API_URL = import.meta.env.API_URL
+
+const API_URL = import.meta.env.API_URL;
 
 const QRCodeGenerator: Component = () => {
   const [url, setUrl] = createSignal("");
@@ -11,6 +14,8 @@ const QRCodeGenerator: Component = () => {
   const [fillColor, setFillColor] = createSignal("#000000");
   const [backgroundColor, setBackgroundColor] = createSignal("#ffffff");
   const [count, setCount] = createSignal<number>(0);
+  const [isCountLoading, setIsCountLoading] = createSignal(false);
+  const [isLoading, setIsLoading] = createSignal(false);
 
   const generateQRCode = async () => {
     if (!url()) {
@@ -18,6 +23,7 @@ const QRCodeGenerator: Component = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `${API_URL}/qrcode?data=${encodeURIComponent(url())}`,
@@ -32,7 +38,8 @@ const QRCodeGenerator: Component = () => {
       await fetchCount();
     } catch (err) {
       setError("Failed to generate QR code");
-      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,11 +72,14 @@ const QRCodeGenerator: Component = () => {
   };
 
   const fetchCount = async () => {
+    setIsCountLoading(true);
     try {
-      const response = await axios.get(API_URL+"/count");
+      const response = await axios.get(API_URL + "/count");
       setCount(response.data);
     } catch (err) {
       console.error("Failed to fetch count:", err);
+    } finally {
+      setIsCountLoading(false);
     }
   };
 
@@ -119,7 +129,10 @@ const QRCodeGenerator: Component = () => {
       </Show>
       {error() && <p class="error">{error()}</p>}
       {qrImage() && <img src={qrImage()} alt="QR Code" />}
-      <p class="count">Total QR Codes Generated: {count()}</p>
+
+      <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
+        <p class="text-gray-600 text-sm">Total QR Codes Generated: {count()}</p>
+      </Show>
     </div>
   );
 };
