@@ -1,42 +1,37 @@
-import { createSignal, Component, Show } from "solid-js";
-import axios from "axios";
+import { createSignal, onMount } from "solid-js";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const Header = () => {
+  const [isDark, setIsDark] = createSignal(true);  // Default to dark
 
-const Header: Component = () => {
-  const [theme, setTheme] = createSignal("light");
+  const toggleTheme = () => {
+    setIsDark(!isDark());
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark() ? 'dark' : 'light');
+  };
 
-  function toggleTheme() {
-    const newTheme = theme() === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-  }
-
-  
+  onMount(() => {
+    // Set dark mode by default
+    document.documentElement.classList.add('dark');
+  });
 
   return (
-    <header class="sticky top-0 z-50 w-full bg-white shadow-md">
+    <header class="sticky top-0 z-50 w-full bg-white dark:bg-gray-800 shadow-md">
       <nav class="container mx-auto px-4 py-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
-            <a href="/" class="text-gray-600 hover:text-gray-1000">
-              <span class="text-2xl font-bold text-gray-900">
+            <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+              <span class="text-2xl font-bold text-gray-900 dark:text-white">
                 QR Code Maker
               </span>
             </a>
           </div>
 
-          <div class="flex items-center space-x-2">
-            <button
-              onClick={toggleTheme}
-              class="px-4 py-2 rounded-lg bg-primary"
-            >
-              {theme() === "light" ? "🌙" : "☀️"}
-            </button>
-
-            
-          </div>
+          <button
+            onClick={toggleTheme}
+            class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
+          >
+            {isDark() ? '☀️' : '🌙'}
+          </button>
         </div>
       </nav>
     </header>

@@ -83,6 +83,8 @@ const QRCodeGenerator: Component = () => {
     }
   };
 
+  fetchCount
+
   return (
     <div class="flex flex-col items-center gap-4 p-8">
       <input
@@ -128,6 +130,7 @@ const QRCodeGenerator: Component = () => {
             />
           </div>
         </div>
+        
         <button
           onClick={generateAdvancedQRCode}
           class="w-full max-w-md px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
