@@ -12,7 +12,7 @@ const Footer: Component = () => {
           
           {/* Links */}
           <div class="flex space-x-6 mt-4 md:mt-0">
-            <a href="/about" class="text-gray-600 hover:text-gray-900">About</a>
+            <a href="https://mayer-mader.com" class="text-gray-600 hover:text-gray-900">About</a>
             <a href="/privacy" class="text-gray-600 hover:text-gray-900">Privacy</a>
             <a href="/contact" class="text-gray-600 hover:text-gray-900">Contact</a>
           </div>

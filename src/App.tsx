@@ -1,19 +1,16 @@
 import type { Component } from 'solid-js';
 import Header from './components/header'
 import Footer from './components/footer'
-import logo from './logo.svg';
-import styles from './App.module.css';
-
 import QRCodeGenerator from './qrCodeMaker';
 
 const App: Component = () => {
   return (
-    <div>
+    <div class="min-h-screen flex flex-col">
       <Header/>
-      <main class="flex-grow" >
+      <main class="flex-grow">
         <QRCodeGenerator />
       </main>
-      <Footer />
+      <Footer/>
     </div>
   );
 }; 
