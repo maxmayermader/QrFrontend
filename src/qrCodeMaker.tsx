@@ -1,6 +1,5 @@
 import { createSignal, Component, Show } from "solid-js";
 import axios from "axios";
-import LoadingCounter from "./components/loading";
 import Spinner from "./components/spinner";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -12,8 +11,6 @@ const QRCodeGenerator: Component = () => {
   const [showAdvanced, setShowAdvanced] = createSignal(false);
   const [fillColor, setFillColor] = createSignal("#000000");
   const [backgroundColor, setBackgroundColor] = createSignal("#ffffff");
-  const [count, setCount] = createSignal<number>(0);
-  const [isCountLoading, setIsCountLoading] = createSignal(false);
   const [isLoading, setIsLoading] = createSignal(false);
 
   const generateQRCode = async () => {
@@ -24,7 +21,7 @@ const QRCodeGenerator: Component = () => {
 
     setIsLoading(true);
     try {
-      console.log("this is api"+API_URL);
+      console.log("this is api" + API_URL);
       const response = await axios.get(
         `${API_URL}/qrcode?data=${encodeURIComponent(url())}`,
         {
@@ -35,7 +32,7 @@ const QRCodeGenerator: Component = () => {
       const imageUrl = URL.createObjectURL(response.data);
       setQrImage(imageUrl);
       setError("");
-      await fetchCount();
+      // await fetchCount();
     } catch (err) {
       setError("Failed to generate QR code");
     } finally {
@@ -64,22 +61,10 @@ const QRCodeGenerator: Component = () => {
       const imageUrl = URL.createObjectURL(response.data);
       setQrImage(imageUrl);
       setError("");
-      await fetchCount();
+      // await fetchCount();
     } catch (err) {
       setError("Failed to generate QR code");
       console.error(err);
-    }
-  };
-
-  const fetchCount = async () => {
-    setIsCountLoading(true);
-    try {
-      const response = await axios.get(API_URL + "/count");
-      setCount(response.data);
-    } catch (err) {
-      console.error("Failed to fetch count:", err);
-    } finally {
-      setIsCountLoading(false);
     }
   };
 
@@ -151,20 +136,20 @@ const QRCodeGenerator: Component = () => {
         when={isLoading()}
         fallback={
           qrImage() && (
-            <img
-              src={qrImage()}
-              alt="QR Code"
-              class="max-w-xs rounded-lg shadow-md"
-            />
+            <div class="w-full max-w-md aspect-square flex items-center justify-center bg-gray-50 rounded-lg p-4">
+              <img
+                src={qrImage()}
+                alt="QR Code"
+                class="w-full h-full object-contain rounded-lg shadow-md"
+              />
+            </div>
           )
         }
       >
         <Spinner />
       </Show>
 
-      <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
-        <p class="text-gray-600 text-sm">Total QR Codes Generated: {count()}</p>
-      </Show>
+      
     </div>
   );
 };
