@@ -24,22 +24,21 @@ const Header: Component = () => {
     <header class="sticky top-0 z-50 w-full bg-white shadow-md">
       <nav class="container mx-auto px-4 py-4">
         <div class="flex items-center justify-between">
-          {/* Logo */}
           <div class="flex items-center space-x-2">
             <a href="/" class="text-gray-600 hover:text-gray-1000">
-              <span class="text-2xl font-bold text-gray-900">QR Code Maker</span>
+              <span class="text-2xl font-bold text-gray-900">
+                QR Code Maker
+              </span>
             </a>
           </div>
 
-          <div>
-            <div>
-              <p class="text-l font-bold text-gray-700">
-                Total QR Codes Generated: 
-              </p>
-              <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
-                <p> {count()} </p>
-              </Show>
-            </div>
+          <div class="flex items-center space-x-2">
+            <p class="text-l font-bold text-gray-700">
+              Total QR Codes Generated:
+            </p>
+            <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
+              <p class="text-l font-bold text-gray-700">{count()}</p>
+            </Show>
           </div>
         </div>
       </nav>
