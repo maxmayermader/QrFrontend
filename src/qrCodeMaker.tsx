@@ -1,6 +1,7 @@
 import { createSignal, Component, Show } from "solid-js";
 import axios from "axios";
 import Spinner from "./components/spinner";
+import LoadingCounter from "./components/loading"
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,6 +13,8 @@ const QRCodeGenerator: Component = () => {
   const [fillColor, setFillColor] = createSignal("#000000");
   const [backgroundColor, setBackgroundColor] = createSignal("#ffffff");
   const [isLoading, setIsLoading] = createSignal(false);
+  const [count, setCount] = createSignal<number>(0);
+  const [isCountLoading, setIsCountLoading] = createSignal(false);
 
   const generateQRCode = async () => {
     if (!url()) {
@@ -65,6 +68,18 @@ const QRCodeGenerator: Component = () => {
     } catch (err) {
       setError("Failed to generate QR code");
       console.error(err);
+    }
+  };
+
+  const fetchCount = async () => {
+    setIsCountLoading(true);
+    try {
+      const response = await axios.get(API_URL + "/count");
+      setCount(response.data);
+    } catch (err) {
+      console.error("Failed to fetch count:", err);
+    } finally {
+      setIsCountLoading(false);
     }
   };
 
@@ -148,6 +163,15 @@ const QRCodeGenerator: Component = () => {
       >
         <Spinner />
       </Show>
+
+      <div>
+      <p class="text-l font-bold text-gray-700">
+              Total QR Codes Generated:
+            </p>
+            <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
+              <p class="text-l font-bold text-gray-700">{count()}</p>
+            </Show>
+      </div>
 
       
     </div>

@@ -1,24 +1,19 @@
 import { createSignal, Component, Show } from "solid-js";
-import LoadingCounter from "./loading";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Header: Component = () => {
-  const [count, setCount] = createSignal<number>(0);
-  const [isCountLoading, setIsCountLoading] = createSignal(false);
+  const [theme, setTheme] = createSignal("light");
 
-  const fetchCount = async () => {
-    setIsCountLoading(true);
-    try {
-      const response = await axios.get(API_URL + "/count");
-      setCount(response.data);
-    } catch (err) {
-      console.error("Failed to fetch count:", err);
-    } finally {
-      setIsCountLoading(false);
-    }
-  };
+  function toggleTheme() {
+    const newTheme = theme() === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+  }
+
+  
 
   return (
     <header class="sticky top-0 z-50 w-full bg-white shadow-md">
@@ -33,12 +28,14 @@ const Header: Component = () => {
           </div>
 
           <div class="flex items-center space-x-2">
-            <p class="text-l font-bold text-gray-700">
-              Total QR Codes Generated:
-            </p>
-            <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
-              <p class="text-l font-bold text-gray-700">{count()}</p>
-            </Show>
+            <button
+              onClick={toggleTheme}
+              class="px-4 py-2 rounded-lg bg-primary"
+            >
+              {theme() === "light" ? "🌙" : "☀️"}
+            </button>
+
+            
           </div>
         </div>
       </nav>

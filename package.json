@@ -19,6 +19,7 @@
     "vite-plugin-solid": "^2.11.0"
   },
   "dependencies": {
+    "@kobalte/core": "^0.13.7",
     "axios": "^1.7.9",
     "pnpm": "^9.15.4",
     "solid-js": "^1.9.3"
