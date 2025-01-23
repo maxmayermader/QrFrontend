@@ -1,7 +1,9 @@
 import { createSignal, Component, Show } from "solid-js";
 import axios from "axios";
+import LoadingCounter from "./components/loading";
+import Spinner from "./components/spinner";
 
-const API_URL = import.meta.env.API_URL
+const API_URL = import.meta.env.VITE_API_URL;
 
 const QRCodeGenerator: Component = () => {
   const [url, setUrl] = createSignal("");
@@ -11,6 +13,8 @@ const QRCodeGenerator: Component = () => {
   const [fillColor, setFillColor] = createSignal("#000000");
   const [backgroundColor, setBackgroundColor] = createSignal("#ffffff");
   const [count, setCount] = createSignal<number>(0);
+  const [isCountLoading, setIsCountLoading] = createSignal(false);
+  const [isLoading, setIsLoading] = createSignal(false);
 
   const generateQRCode = async () => {
     if (!url()) {
@@ -18,7 +22,9 @@ const QRCodeGenerator: Component = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
+      console.log("this is api"+API_URL);
       const response = await axios.get(
         `${API_URL}/qrcode?data=${encodeURIComponent(url())}`,
         {
@@ -32,7 +38,8 @@ const QRCodeGenerator: Component = () => {
       await fetchCount();
     } catch (err) {
       setError("Failed to generate QR code");
-      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,61 +72,99 @@ const QRCodeGenerator: Component = () => {
   };
 
   const fetchCount = async () => {
+    setIsCountLoading(true);
     try {
-      const response = await axios.get(API_URL+"/count");
+      const response = await axios.get(API_URL + "/count");
       setCount(response.data);
     } catch (err) {
       console.error("Failed to fetch count:", err);
+    } finally {
+      setIsCountLoading(false);
     }
   };
 
   return (
-    <div class="qr-container">
+    <div class="flex flex-col items-center gap-4 p-8">
       <input
         type="text"
         value={url()}
         onInput={(e) => setUrl(e.currentTarget.value)}
         placeholder="Enter URL for QR code"
+        class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
       <button
-        class="advanced-toggle"
+        class="w-full max-w-md text-left text-gray-600 hover:text-gray-900 transition-colors"
         onClick={() => setShowAdvanced(!showAdvanced())}
       >
         {showAdvanced() ? "▼ Advanced Options" : "▶ Advanced Options"}
       </button>
 
       <Show when={showAdvanced()}>
-        <div class="advanced-options">
-          <div class="color-option">
-            <label for="fill-color">Fill Color:</label>
+        <div class="w-full max-w-md p-4 bg-gray-50 rounded-lg">
+          <div class="flex items-center justify-between mb-4">
+            <label for="fill-color" class="text-gray-700">
+              Fill Color:
+            </label>
             <input
               type="color"
               id="fill-color"
               value={fillColor()}
               onChange={(e) => setFillColor(e.currentTarget.value)}
+              class="w-12 h-8 rounded cursor-pointer"
             />
           </div>
 
-          <div class="color-option">
-            <label for="background-color">Background Color:</label>
+          <div class="flex items-center justify-between">
+            <label for="background-color" class="text-gray-700">
+              Background Color:
+            </label>
             <input
               type="color"
               id="background-color"
               value={backgroundColor()}
               onChange={(e) => setBackgroundColor(e.currentTarget.value)}
+              class="w-12 h-8 rounded cursor-pointer"
             />
           </div>
         </div>
-        <button onClick={generateAdvancedQRCode}>Generate QR Code</button>
+        <button
+          onClick={generateAdvancedQRCode}
+          class="w-full max-w-md px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          Generate QR Code
+        </button>
       </Show>
 
       <Show when={!showAdvanced()}>
-        <button onClick={generateQRCode}>Generate QR Code</button>
+        <button
+          onClick={generateQRCode}
+          class="w-full max-w-md px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          Generate QR Code
+        </button>
       </Show>
-      {error() && <p class="error">{error()}</p>}
-      {qrImage() && <img src={qrImage()} alt="QR Code" />}
-      <p class="count">Total QR Codes Generated: {count()}</p>
+
+      {error() && <p class="text-red-500">{error()}</p>}
+
+      <Show
+        when={isLoading()}
+        fallback={
+          qrImage() && (
+            <img
+              src={qrImage()}
+              alt="QR Code"
+              class="max-w-xs rounded-lg shadow-md"
+            />
+          )
+        }
+      >
+        <Spinner />
+      </Show>
+
+      <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
+        <p class="text-gray-600 text-sm">Total QR Codes Generated: {count()}</p>
+      </Show>
     </div>
   );
 };
