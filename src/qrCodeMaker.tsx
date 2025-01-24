@@ -1,13 +1,14 @@
 import { createSignal, Component, Show } from "solid-js";
 import axios from "axios";
 import Spinner from "./components/spinner";
-import LoadingCounter from "./components/loading"
+import LoadingCounter from "./components/loading";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const QRCodeGenerator: Component = () => {
   const [url, setUrl] = createSignal("");
   const [qrImage, setQrImage] = createSignal<string>("");
+
   const [error, setError] = createSignal("");
   const [showAdvanced, setShowAdvanced] = createSignal(false);
   const [fillColor, setFillColor] = createSignal("#000000");
@@ -83,29 +84,30 @@ const QRCodeGenerator: Component = () => {
     }
   };
 
-  fetchCount
+  fetchCount;
 
   return (
-    <div class="flex flex-col items-center gap-4 p-8">
+    <div class="bg-gray-100 dark:bg-gray-800 flex flex-col items-center gap-4 p-8">
       <input
-        type="text"
-        value={url()}
-        onInput={(e) => setUrl(e.currentTarget.value)}
-        placeholder="Enter URL for QR code"
-        class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+  type="text"
+  value={url()}
+  onInput={(e) => setUrl(e.currentTarget.value)}
+  placeholder="Enter URL for QR code"
+  class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder:text-gray-600 dark:placeholder:text-gray-400"
+/>
+
 
       <button
-        class="w-full max-w-md text-left text-gray-600 hover:text-gray-900 transition-colors"
+        class="w-full max-w-md text-left text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
         onClick={() => setShowAdvanced(!showAdvanced())}
       >
         {showAdvanced() ? "▼ Advanced Options" : "▶ Advanced Options"}
       </button>
 
       <Show when={showAdvanced()}>
-        <div class="w-full max-w-md p-4 bg-gray-50 rounded-lg">
+      <div class="w-full max-w-md p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
           <div class="flex items-center justify-between mb-4">
-            <label for="fill-color" class="text-gray-700">
+            <label for="fill-color" class="text-gray-700 dark:text-gray-300">
               Fill Color:
             </label>
             <input
@@ -118,7 +120,7 @@ const QRCodeGenerator: Component = () => {
           </div>
 
           <div class="flex items-center justify-between">
-            <label for="background-color" class="text-gray-700">
+            <label for="background-color" class="text-gray-700 dark:text-gray-300">
               Background Color:
             </label>
             <input
@@ -130,7 +132,7 @@ const QRCodeGenerator: Component = () => {
             />
           </div>
         </div>
-        
+
         <button
           onClick={generateAdvancedQRCode}
           class="w-full max-w-md px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
@@ -168,15 +170,15 @@ const QRCodeGenerator: Component = () => {
       </Show>
 
       <div>
-      <p class="text-l font-bold text-gray-700">
-              Total QR Codes Generated:
-            </p>
-            <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
-              <p class="text-l font-bold text-gray-700">{count()}</p>
-            </Show>
+        <p class="text-l font-bold text-gray-700 dark:text-gray-300">
+          Total QR Codes Generated:
+        </p>
+        <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
+          <p class="text-l font-bold text-gray-700 dark:text-gray-300">
+            {count()}
+          </p>
+        </Show>
       </div>
-
-      
     </div>
   );
 };
