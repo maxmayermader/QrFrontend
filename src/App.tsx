@@ -10,7 +10,7 @@ const App: Component = () => {
     <ColorModeScript initialColorMode='dark'/>
     <div class="min-h-screen flex flex-col">
       <Header/>
-      <main class="flex-grow">
+      <main class="flex-grow flex">
         <QRCodeGenerator />
       </main>
       <Footer/>

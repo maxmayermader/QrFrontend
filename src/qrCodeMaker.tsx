@@ -1,4 +1,4 @@
-import { createSignal, Component, Show } from "solid-js";
+import { createSignal, Component, Show, onMount } from "solid-js";
 import axios from "axios";
 import Spinner from "./components/spinner";
 import LoadingCounter from "./components/loading";
@@ -75,7 +75,7 @@ const QRCodeGenerator: Component = () => {
   const fetchCount = async () => {
     setIsCountLoading(true);
     try {
-      const response = await axios.get(API_URL + "/count");
+      const response = await axios.get(`${API_URL}/count`);
       setCount(response.data);
     } catch (err) {
       console.error("Failed to fetch count:", err);
@@ -83,18 +83,47 @@ const QRCodeGenerator: Component = () => {
       setIsCountLoading(false);
     }
   };
+  onMount(() => {
+    fetchCount();
+  });
+
+  const handleUrlChange = async (e: InputEvent) => {
+    const input = e.currentTarget as HTMLInputElement;
+    setUrl(input.value);
+    
+    if (input.value) {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `${API_URL}/qrcode?data=${encodeURIComponent(input.value)}`,
+          {
+            responseType: "blob",
+          }
+        );
+        const imageUrl = URL.createObjectURL(response.data);
+        setQrImage(imageUrl);
+        setError("");
+      } catch (err) {
+        setError("Failed to generate QR code");
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setQrImage("");
+    }
+  };
 
   fetchCount;
 
   return (
-    <div class="bg-gray-100 dark:bg-gray-800 flex flex-col items-center gap-4 p-8">
+    <div class="w-full flex flex-col items-center gap-4 p-8 bg-gray-100 dark:bg-gray-800">
       <input
-  type="text"
-  value={url()}
-  onInput={(e) => setUrl(e.currentTarget.value)}
-  placeholder="Enter URL for QR code"
-  class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder:text-gray-600 dark:placeholder:text-gray-400"
-/>
+        type="text"
+        value={url()}
+        onInput={handleUrlChange}
+        placeholder="Enter URL for QR code"
+        class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+      />
 
 
       <button
@@ -156,7 +185,7 @@ const QRCodeGenerator: Component = () => {
         when={isLoading()}
         fallback={
           qrImage() && (
-            <div class="w-full max-w-md aspect-square flex items-center justify-center bg-gray-50 rounded-lg p-4">
+            <div class="w-full max-w-md aspect-square flex items-center justify-center bg-white dark:bg-gray-700 rounded-lg p-4">
               <img
                 src={qrImage()}
                 alt="QR Code"
@@ -169,11 +198,14 @@ const QRCodeGenerator: Component = () => {
         <Spinner />
       </Show>
 
-      <div>
+      <div class="flex items-center space-x-2">
         <p class="text-l font-bold text-gray-700 dark:text-gray-300">
           Total QR Codes Generated:
         </p>
-        <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
+        <Show 
+          when={!isCountLoading()} 
+          fallback={<LoadingCounter />}
+        >
           <p class="text-l font-bold text-gray-700 dark:text-gray-300">
             {count()}
           </p>
