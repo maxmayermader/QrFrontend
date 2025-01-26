@@ -2,13 +2,13 @@ import { createSignal, Component, Show, onMount } from "solid-js";
 import axios from "axios";
 import Spinner from "./components/spinner";
 import LoadingCounter from "./components/loading";
+import InputSelector from "./components/inputSelector";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const QRCodeGenerator: Component = () => {
   const [url, setUrl] = createSignal("");
   const [qrImage, setQrImage] = createSignal<string>("");
-
   const [error, setError] = createSignal("");
   const [showAdvanced, setShowAdvanced] = createSignal(false);
   const [fillColor, setFillColor] = createSignal("#000000");
@@ -16,6 +16,20 @@ const QRCodeGenerator: Component = () => {
   const [isLoading, setIsLoading] = createSignal(false);
   const [count, setCount] = createSignal<number>(0);
   const [isCountLoading, setIsCountLoading] = createSignal(false);
+  const [inputType, setInputType] = createSignal('url');
+  
+  const getPlaceholder = () => {
+    switch(inputType()) {
+      case 'url':
+        return 'Enter URL for QR code';
+      case 'text':
+        return 'Enter text for QR code';
+      case 'wifi':
+        return 'Enter WiFi name (SSID)';
+      default:
+        return 'Enter URL for QR code';
+    }
+  };
 
   const generateQRCode = async () => {
     if (!url()) {
@@ -117,12 +131,20 @@ const QRCodeGenerator: Component = () => {
 
   return (
     <div class="w-full flex flex-col items-center gap-4 p-8 bg-gray-100 dark:bg-gray-800">
-      <input
+      {/* <input
         type="text"
         value={url()}
         onInput={handleUrlChange}
         placeholder="Enter URL for QR code"
         class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+      /> */}
+      <InputSelector onSelect={setInputType} />
+      <input
+        type="text"
+        value={url()}
+        onInput={(e) => setUrl(e.currentTarget.value)}
+        placeholder={getPlaceholder()}
+        class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
 
