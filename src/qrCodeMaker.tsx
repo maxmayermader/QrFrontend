@@ -44,16 +44,18 @@ const QRCodeGenerator: Component = () => {
       setError("Please enter required information");
       return;
     }
-
+  
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `${API_URL}/qrcode?data=${encodeURIComponent(formattedData)}`,
+      const response = await axios.post(
+        `${API_URL}/qrcode`, 
+        { data: formattedData },
         {
+          params: { type: inputType() },
           responseType: "blob",
         }
       );
-
+  
       const imageUrl = URL.createObjectURL(response.data);
       setQrImage(imageUrl);
       setError("");

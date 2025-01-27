@@ -21,6 +21,9 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
     });
   };
 
+  const inputClasses = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 dark:border-gray-600";
+  const textareaClasses = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 dark:border-gray-600 resize-none";
+
   return (
     <div class="w-full max-w-md space-y-4">
       <div class="flex gap-2 mb-4">
@@ -42,7 +45,7 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
               : 'bg-blue-500 text-white hover:bg-blue-600'
           }`}
         >
-          Text
+          Plain Text
         </button>
         <button
           onClick={() => props.onSelect('wifi')}
@@ -72,7 +75,7 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
             type="url"
             onInput={(e) => props.onInputChange({ type: 'url', url: e.currentTarget.value })}
             placeholder="Enter URL"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class={inputClasses}
           />
         )}
 
@@ -81,7 +84,7 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
             type="text"
             onInput={(e) => props.onInputChange({ type: 'text', text: e.currentTarget.value })}
             placeholder="Enter text"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class={inputClasses}
           />
         )}
 
@@ -91,11 +94,11 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
               type="text"
               onInput={(e) => handleWifiInput('ssid', e.currentTarget.value)}
               placeholder="Network name (SSID)"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class={inputClasses}
             />
             <select
               onChange={(e) => handleWifiInput('security', e.currentTarget.value)}
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class={inputClasses}
             >
               <option value="">Select security type</option>
               <option value="WPA">WPA/WPA2</option>
@@ -106,7 +109,7 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
               type="password"
               onInput={(e) => handleWifiInput('password', e.currentTarget.value)}
               placeholder="Password"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class={inputClasses}
             />
           </div>
         )}
@@ -117,12 +120,12 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
               type="tel"
               onInput={(e) => handleSmsInput('phone', e.currentTarget.value)}
               placeholder="Phone number"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class={inputClasses}
             />
             <textarea
               onInput={(e) => handleSmsInput('message', e.currentTarget.value)}
               placeholder="Message"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class={textareaClasses}
               rows="3"
             />
           </div>
