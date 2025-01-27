@@ -3,11 +3,12 @@ import axios from "axios";
 import Spinner from "./components/spinner";
 import LoadingCounter from "./components/loading";
 import InputSelector from "./components/inputSelector";
+import AdvQrCode from "./components/advQrCode";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const QRCodeGenerator: Component = () => {
-  const [url, setUrl] = createSignal("");
+  const [qrData, setQrData] = createSignal({});
   const [qrImage, setQrImage] = createSignal<string>("");
   const [error, setError] = createSignal("");
   const [showAdvanced, setShowAdvanced] = createSignal(false);
@@ -16,32 +17,38 @@ const QRCodeGenerator: Component = () => {
   const [isLoading, setIsLoading] = createSignal(false);
   const [count, setCount] = createSignal<number>(0);
   const [isCountLoading, setIsCountLoading] = createSignal(false);
-  const [inputType, setInputType] = createSignal('url');
-  
-  const getPlaceholder = () => {
-    switch(inputType()) {
+  const [inputType, setInputType] = createSignal("url");
+
+  const formatQRData = (data: any) => {
+    switch (data.type) {
       case 'url':
-        return 'Enter URL for QR code';
+        return data.url;
       case 'text':
-        return 'Enter text for QR code';
+        return data.text;
       case 'wifi':
-        return 'Enter WiFi name (SSID)';
+        return `WIFI:T:${data.security};S:${data.ssid};P:${data.password};;`;
+      case 'sms':
+        return `SMSTO:${data.phone}:${data.message}`;
       default:
-        return 'Enter URL for QR code';
+        return '';
     }
   };
 
+  const handleInputChange = (data: any) => {
+    setQrData(data);
+  };
+
   const generateQRCode = async () => {
-    if (!url()) {
-      setError("Please enter a URL");
+    const formattedData = formatQRData(qrData());
+    if (!formattedData) {
+      setError("Please enter required information");
       return;
     }
 
     setIsLoading(true);
     try {
-      console.log("this is api" + API_URL);
       const response = await axios.get(
-        `${API_URL}/qrcode?data=${encodeURIComponent(url())}`,
+        `${API_URL}/qrcode?data=${encodeURIComponent(formattedData)}`,
         {
           responseType: "blob",
         }
@@ -50,7 +57,6 @@ const QRCodeGenerator: Component = () => {
       const imageUrl = URL.createObjectURL(response.data);
       setQrImage(imageUrl);
       setError("");
-      // await fetchCount();
     } catch (err) {
       setError("Failed to generate QR code");
     } finally {
@@ -59,18 +65,15 @@ const QRCodeGenerator: Component = () => {
   };
 
   const generateAdvancedQRCode = async () => {
-    if (!url()) {
-      setError("Please enter a URL");
+    const formattedData = formatQRData(qrData());
+    if (!formattedData) {
+      setError("Please enter required information");
       return;
     }
 
     try {
       const response = await axios.get(
-        `${API_URL}/qrcode?data=${encodeURIComponent(
-          url()
-        )}&fill_color=${encodeURIComponent(
-          fillColor()
-        )}&background_color=${encodeURIComponent(backgroundColor())}`,
+        `${API_URL}/qrcode?data=${encodeURIComponent(formattedData)}&fill_color=${encodeURIComponent(fillColor())}&background_color=${encodeURIComponent(backgroundColor())}`,
         {
           responseType: "blob",
         }
@@ -79,7 +82,6 @@ const QRCodeGenerator: Component = () => {
       const imageUrl = URL.createObjectURL(response.data);
       setQrImage(imageUrl);
       setError("");
-      // await fetchCount();
     } catch (err) {
       setError("Failed to generate QR code");
       console.error(err);
@@ -97,56 +99,18 @@ const QRCodeGenerator: Component = () => {
       setIsCountLoading(false);
     }
   };
+
   onMount(() => {
     fetchCount();
   });
 
-  const handleUrlChange = async (e: InputEvent) => {
-    const input = e.currentTarget as HTMLInputElement;
-    setUrl(input.value);
-    
-    if (input.value) {
-      setIsLoading(true);
-      try {
-        const response = await axios.get(
-          `${API_URL}/qrcode?data=${encodeURIComponent(input.value)}`,
-          {
-            responseType: "blob",
-          }
-        );
-        const imageUrl = URL.createObjectURL(response.data);
-        setQrImage(imageUrl);
-        setError("");
-      } catch (err) {
-        setError("Failed to generate QR code");
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      setQrImage("");
-    }
-  };
-
-  fetchCount;
-
   return (
     <div class="w-full flex flex-col items-center gap-4 p-8 bg-gray-100 dark:bg-gray-800">
-      {/* <input
-        type="text"
-        value={url()}
-        onInput={handleUrlChange}
-        placeholder="Enter URL for QR code"
-        class="w-full max-w-md px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-      /> */}
-      <InputSelector onSelect={setInputType} />
-      <input
-        type="text"
-        value={url()}
-        onInput={(e) => setUrl(e.currentTarget.value)}
-        placeholder={getPlaceholder()}
-        class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      <InputSelector 
+        onSelect={setInputType} 
+        onInputChange={handleInputChange}
+        inputType={inputType()}
       />
-
 
       <button
         class="w-full max-w-md text-left text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -156,40 +120,14 @@ const QRCodeGenerator: Component = () => {
       </button>
 
       <Show when={showAdvanced()}>
-      <div class="w-full max-w-md p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          <div class="flex items-center justify-between mb-4">
-            <label for="fill-color" class="text-gray-700 dark:text-gray-300">
-              Fill Color:
-            </label>
-            <input
-              type="color"
-              id="fill-color"
-              value={fillColor()}
-              onChange={(e) => setFillColor(e.currentTarget.value)}
-              class="w-12 h-8 rounded cursor-pointer"
-            />
-          </div>
-
-          <div class="flex items-center justify-between">
-            <label for="background-color" class="text-gray-700 dark:text-gray-300">
-              Background Color:
-            </label>
-            <input
-              type="color"
-              id="background-color"
-              value={backgroundColor()}
-              onChange={(e) => setBackgroundColor(e.currentTarget.value)}
-              class="w-12 h-8 rounded cursor-pointer"
-            />
-          </div>
-        </div>
-
-        <button
-          onClick={generateAdvancedQRCode}
-          class="w-full max-w-md px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-        >
-          Generate QR Code
-        </button>
+        <AdvQrCode
+          showAdvanced={showAdvanced()}
+          fillColor={fillColor()}
+          backgroundColor={backgroundColor()}
+          setFillColor={setFillColor}
+          setBackgroundColor={setBackgroundColor}
+          generateAdvancedQRCode={generateAdvancedQRCode}
+        />
       </Show>
 
       <Show when={!showAdvanced()}>
@@ -224,10 +162,7 @@ const QRCodeGenerator: Component = () => {
         <p class="text-l font-bold text-gray-700 dark:text-gray-300">
           Total QR Codes Generated:
         </p>
-        <Show 
-          when={!isCountLoading()} 
-          fallback={<LoadingCounter />}
-        >
+        <Show when={!isCountLoading()} fallback={<LoadingCounter />}>
           <p class="text-l font-bold text-gray-700 dark:text-gray-300">
             {count()}
           </p>
