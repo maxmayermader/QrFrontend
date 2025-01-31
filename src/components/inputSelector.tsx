@@ -1,4 +1,4 @@
-import { Component } from 'solid-js';
+import { Component, Show, createSignal } from 'solid-js';
 
 interface InputSelectorProps {
   onSelect: (type: string) => void;
@@ -7,6 +7,7 @@ interface InputSelectorProps {
 }
 
 const InputSelector: Component<InputSelectorProps> = (props) => {
+  const [securityType, setSecurityType] = createSignal<string>("");
   const handleWifiInput = (field: string, value: string) => {
     props.onInputChange({
       type: 'wifi',
@@ -97,7 +98,10 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
               class={inputClasses}
             />
             <select
-              onChange={(e) => handleWifiInput('security', e.currentTarget.value)}
+              onChange={(e) => {
+                handleWifiInput('security', e.currentTarget.value);
+                setSecurityType(e.currentTarget.value);
+              }}
               class={inputClasses}
             >
               <option value="">Select security type</option>
@@ -105,12 +109,14 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
               <option value="WEP">WEP</option>
               <option value="nopass">No Password</option>
             </select>
+            <Show when={securityType() !== "nopass"}>
             <input
               type="password"
               onInput={(e) => handleWifiInput('password', e.currentTarget.value)}
               placeholder="Password"
               class={inputClasses}
             />
+            </Show>
           </div>
         )}
 
