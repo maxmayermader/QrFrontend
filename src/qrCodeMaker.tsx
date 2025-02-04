@@ -5,6 +5,7 @@ import LoadingCounter from "./components/loading";
 import InputSelector from "./components/inputSelector";
 import AdvQrCode from "./components/advQrCode";
 import { Url, PlainText, Wifi, Sms, QRData, QRCodeType } from "./types/types";
+import { qrCodeAPI } from './api/api';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -20,39 +21,40 @@ const QRCodeGenerator: Component = () => {
   const [isCountLoading, setIsCountLoading] = createSignal(false);
   const [inputType, setInputType] = createSignal("url");
 
-  const formatQRData = (data: any) => {
-    switch (data.type) {
+  const formatQRData = (inputData: any) => {
+    switch (inputData.type) {
       case 'url':
         return {
-          type: QRCodeType.URL,  
-          payload: {
+          type: QRCodeType.TXT,  
+          data: {
             name: "url",
-          url: data.url
+            text: inputData.url
         }} as QRData;
       case 'text':
         return {
-          type: QRCodeType.PLAINTEXT,
-          payload: {
+          type: QRCodeType.TXT,
+          data: {
             name: "text",
-          text: data.text
-        }} as QRData;
+            text: inputData.text
+          }
+        } as QRData;
       case 'wifi':
         return {
           type: QRCodeType.WIFI,  
-          payload: {
+          data: {
             name: "wifi",
-          security: data.security,
-          ssid: data.ssid,
-          password: data.password
+          security: inputData.security,
+          ssid: inputData.ssid,
+          password: inputData.password
         }} as QRData;
       case 'sms':
         return {
           type: QRCodeType.SMS,  
-          payload: {
+          data: {
             name: "sms",
-          phone: data.phone,
-          message: data.message
-        }};
+          phone: inputData.phone,
+          message: inputData.message
+        }} as QRData;
       default:
         return null;
     }
@@ -68,19 +70,12 @@ const QRCodeGenerator: Component = () => {
       setError("Please enter required information");
       return;
     }
-  
+
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        `${API_URL}/qrcode/?qr_type=${formattedData.type}`, 
-        { data : formattedData.payload },
-        {
-          params: { type: inputType() },
-          responseType: "blob",
-        }
-      );
-  
-      const imageUrl = URL.createObjectURL(response.data);
+      const resp = await qrCodeAPI.generateQRCode(formattedData, inputType());
+      const imageUrl = URL.createObjectURL(resp);
+      console.log("image url", imageUrl);
       setQrImage(imageUrl);
       setError("");
     } catch (err) {
@@ -100,7 +95,7 @@ const QRCodeGenerator: Component = () => {
     try {
       const response = await axios.post(
         `${API_URL}/qrcode/?qr_type=${formattedData.type}`, 
-        { data : formattedData.payload },
+        { data : formattedData.data },
         {
           params: { type: inputType() },
           responseType: "blob",

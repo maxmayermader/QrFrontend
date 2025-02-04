@@ -1,16 +1,16 @@
 
 
 export enum QRCodeType {
-    URL = 0,
-    PLAINTEXT = 1,
-    WIFI = 2,
-    SMS = 3
+    TXT = 0,
+    VCARD = 1,
+    WIFI = 3,
+    SMS = 4
   }
   
   
 export type Url = {
     name: string;
-    url: string;
+    text: string;
 }
 
 export type PlainText = {
@@ -33,5 +33,5 @@ export type Sms = {
 
 export interface QRData {
     type: number;
-    payload: Url | PlainText | Wifi | Sms;
+    data: Url | PlainText | Wifi | Sms;
 }
