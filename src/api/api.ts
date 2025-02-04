@@ -18,7 +18,7 @@ export const qrCodeAPI = {
     console.log(formattedData);
     const response = await axios.post<Blob>(
       `${API_URL}/qrcode?qr_type=${formattedData.type}`,
-      formattedData.data,
+      {sms : formattedData.data},
     //   { "data": formattedData.payload },
       {
         responseType: 'blob',

@@ -43,7 +43,7 @@ export type Wifi = {
 
 export type Sms = {
     name: string
-    phone: string;
+    phone: number;
     message: string;
 }
 

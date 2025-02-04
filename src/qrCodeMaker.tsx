@@ -53,7 +53,7 @@ const QRCodeGenerator: Component = () => {
           type: QRCodeType.SMS,  
           data: {
             name: "sms",
-          phone: inputData.phone,
+          phone: Number(inputData.phone.replace(/[^0-9]/g, "")),
           message: inputData.message
         }} as QRData;
       default:
