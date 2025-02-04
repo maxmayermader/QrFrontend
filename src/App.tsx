@@ -3,8 +3,11 @@ import Header from './components/header'
 import Footer from './components/footer'
 import QRCodeGenerator from './qrCodeMaker';
 import { ColorModeProvider, ColorModeScript } from "@kobalte/core";
+import { inject } from '@vercel/analytics';
 
 const App: Component = () => {
+  inject();
+
   return (
     <ColorModeProvider>
     <ColorModeScript initialColorMode='dark'/>
@@ -15,7 +18,7 @@ const App: Component = () => {
       </main>
       <Footer/>
     </div>
-    </ColorModeProvider>
+    </ColorModeProvider> 
   );
 }; 
 

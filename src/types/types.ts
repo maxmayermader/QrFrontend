@@ -7,6 +7,21 @@ export enum QRCodeType {
     SMS = 4
   }
   
+export type VCard = {
+    fn: string;
+    ln: string;
+    email: string;
+    phone: string;
+    org: string;
+    title: string;
+    url: string;
+    bday: string;
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+}
   
 export type Url = {
     name: string;
