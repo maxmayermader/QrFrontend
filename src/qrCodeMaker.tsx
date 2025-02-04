@@ -4,6 +4,7 @@ import Spinner from "./components/spinner";
 import LoadingCounter from "./components/loading";
 import InputSelector from "./components/inputSelector";
 import AdvQrCode from "./components/advQrCode";
+import { Url, PlainText, Wifi, Sms, QRData, QRCodeType } from "./types/types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -22,15 +23,34 @@ const QRCodeGenerator: Component = () => {
   const formatQRData = (data: any) => {
     switch (data.type) {
       case 'url':
-        return data.url;
+        return {
+          type: QRCodeType.URL,  
+          payload: {
+          url: data.url
+        }} as QRData;
       case 'text':
-        return data.text;
+        return {
+          type: QRCodeType.PLAINTEXT,
+          payload: {
+          text: data.text
+        }} as QRData;
       case 'wifi':
-        return `WIFI:T:${data.security};S:${data.ssid};P:${data.password};;`;
+        return {
+          type: QRCodeType.WIFI,  
+          payload: {
+          security: data.security,
+          ssid: data.ssid,
+          password: data.password
+        }} as QRData;
       case 'sms':
-        return `SMSTO:${data.phone}:${data.message}`;
+        return {
+          type: QRCodeType.SMS,  
+          payload: {
+          phone: data.phone,
+          message: data.message
+        }};
       default:
-        return '';
+        return null;
     }
   };
 

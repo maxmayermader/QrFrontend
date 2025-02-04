@@ -1,23 +1,33 @@
 
-type Url = {
-    qrCodeType: 0;
+
+export enum QRCodeType {
+    URL = 0,
+    PLAINTEXT = 1,
+    WIFI = 2,
+    SMS = 3
+  }
+  
+  
+export type Url = {
     url: string;
 }
 
-type PlainText = {
-    qrCodeType: 0;
+export type PlainText = {
     text: string;
 }
 
-type Wifi = {
-    qrCodeType: 2;
+export type Wifi = {
     security: string;
     ssid: string;
     password: string;
 }
 
-type Sms = {
-    qrCodeType: 3;
+export type Sms = {
     phone: string;
     message: string;
+}
+
+export interface QRData {
+    type: number;
+    payload: Url | PlainText | Wifi | Sms;
 }
