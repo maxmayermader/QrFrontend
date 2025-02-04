@@ -8,6 +8,14 @@ interface InputSelectorProps {
 
 const InputSelector: Component<InputSelectorProps> = (props) => {
   const [securityType, setSecurityType] = createSignal<string>("");
+  const [smsData, setSmsData] = createSignal<{
+    type: string;
+    phone?: string;
+    message?: string;
+  }>({
+    type: "sms",
+  });
+
   const handleWifiInput = (field: string, value: string) => {
     props.onInputChange({
       type: "wifi",
@@ -16,8 +24,12 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
   };
 
   const handleSmsInput = (field: string, value: string) => {
+    setSmsData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
     props.onInputChange({
-      type: "sms",
+      ...smsData(),
       [field]: value,
     });
   };
@@ -133,11 +145,13 @@ const InputSelector: Component<InputSelectorProps> = (props) => {
             <input
               type="tel"
               onInput={(e) => handleSmsInput("phone", e.currentTarget.value)}
+              value={smsData().phone || ""}
               placeholder="Phone number"
               class={inputClasses}
             />
             <textarea
               onInput={(e) => handleSmsInput("message", e.currentTarget.value)}
+              value={smsData().message || ""}
               placeholder="Message"
               class={textareaClasses}
               rows="3"

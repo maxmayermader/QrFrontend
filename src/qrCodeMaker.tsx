@@ -22,6 +22,7 @@ const QRCodeGenerator: Component = () => {
   const [inputType, setInputType] = createSignal("url");
 
   const formatQRData = (inputData: any) => {
+    console.log("input data", inputData);
     switch (inputData.type) {
       case 'url':
         return {
