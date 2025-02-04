@@ -26,18 +26,21 @@ const QRCodeGenerator: Component = () => {
         return {
           type: QRCodeType.URL,  
           payload: {
+            name: "url",
           url: data.url
         }} as QRData;
       case 'text':
         return {
           type: QRCodeType.PLAINTEXT,
           payload: {
+            name: "text",
           text: data.text
         }} as QRData;
       case 'wifi':
         return {
           type: QRCodeType.WIFI,  
           payload: {
+            name: "wifi",
           security: data.security,
           ssid: data.ssid,
           password: data.password
@@ -46,6 +49,7 @@ const QRCodeGenerator: Component = () => {
         return {
           type: QRCodeType.SMS,  
           payload: {
+            name: "sms",
           phone: data.phone,
           message: data.message
         }};
@@ -68,8 +72,8 @@ const QRCodeGenerator: Component = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${API_URL}/qrcode`, 
-        { data: formattedData },
+        `${API_URL}/qrcode/?qr_type=${formattedData.type}`, 
+        { data : formattedData.payload },
         {
           params: { type: inputType() },
           responseType: "blob",
@@ -94,9 +98,11 @@ const QRCodeGenerator: Component = () => {
     }
 
     try {
-      const response = await axios.get(
-        `${API_URL}/qrcode?data=${encodeURIComponent(formattedData)}&fill_color=${encodeURIComponent(fillColor())}&background_color=${encodeURIComponent(backgroundColor())}`,
+      const response = await axios.post(
+        `${API_URL}/qrcode/?qr_type=${formattedData.type}`, 
+        { data : formattedData.payload },
         {
+          params: { type: inputType() },
           responseType: "blob",
         }
       );
