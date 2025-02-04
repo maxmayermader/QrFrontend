@@ -1,10 +1,11 @@
+import { ModuleTuple } from "next/dist/build/webpack/loaders/metadata/types";
 
 
 export enum QRCodeType {
     TXT = 0,
+    WIFI = 2,
     VCARD = 1,
-    WIFI = 3,
-    SMS = 4
+    SMS = 3
   }
   
 export type VCard = {
@@ -48,5 +49,13 @@ export type Sms = {
 
 export interface QRData {
     type: number;
-    data: Url | PlainText | Wifi | Sms;
+    data: VCard | Url | PlainText | Wifi | Sms;
+}
+
+export interface AdvancedQRData {
+    type: number;
+    data: VCard | Url | PlainText | Wifi | Sms;
+    fillColor: Array<number>;
+    backColor: Array<number>;
+    moduleShape: number;
 }
