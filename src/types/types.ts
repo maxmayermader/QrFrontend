@@ -25,27 +25,32 @@ export type VCard = {
 }
   
   export interface SMSData {
-    type: number;
     phone: number;
     message: string;
   }
   
   export interface TextData {
-    type: number;
     text: string;
   }
   
  export interface WiFiData {
-    type: number;
     ssid: string;
     password: string;
     security: string;
   }
 
 export interface AdvancedQRData {
-    type: number;
     data: VCard | TextData  | WiFiData | SMSData;
     fillColor: Array<number>;
     backColor: Array<number>;
     moduleShape: number;
 }
+
+export interface QRFormatResult {
+    formattedData: {
+      TextData?: { text: string };
+      WiFiData?: { ssid: string; password: string; security: string };
+      SMSData?: { phone: number; message: string };
+    };
+    qrType: number;
+  }

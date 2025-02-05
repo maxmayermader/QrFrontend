@@ -1,6 +1,6 @@
 // api.ts
 import axios from 'axios';
-import { QRData } from '../types/types';
+import { WiFiData, TextData, SMSData, VCard, QRFormatResult } from '../types/types';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,20 +13,22 @@ interface CountResponse {
 }
 
 export const qrCodeAPI = {
-  generateQRCode: async (formattedData: QRData, inputType: string): Promise<Blob> => {
+  generateQRCode: async (formattedData: QRFormatResult, inputType: number): Promise<Blob> => {
     console.log("sending qr data to api");
     console.log(formattedData);
     const response = await axios.post<Blob>(
-      `${API_URL}/qrcode?qr_type=${formattedData.type}`,
-      {sms : formattedData.data},
-    //   { "data": formattedData.payload },
-      {
-        responseType: 'blob',
-      }
+        `${API_URL}/qrcode?qr_type=${inputType}`,
+        // Send the inner data object directly
+        formattedData.formattedData.SMSData || 
+        formattedData.formattedData.WiFiData ||
+        formattedData.formattedData.TextData,
+        {
+            responseType: 'blob',
+        }
     );
-    console.log("response", response);
     return response.data;
-  },
+},
+
 
   getCount: async (): Promise<number> => {
     const response = await axios.get<CountResponse>(`${API_URL}/count`);

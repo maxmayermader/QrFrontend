@@ -4,7 +4,7 @@ import Spinner from "./components/spinner";
 import LoadingCounter from "./components/loading";
 import InputSelector from "./components/inputSelector";
 import AdvQrCode from "./components/advQrCode";
-import {TextData, WiFiData, SMSData, QRCodeType } from "./types/types";
+import {TextData, WiFiData, SMSData, QRCodeType, QRFormatResult } from "./types/types";
 import { qrCodeAPI } from './api/api';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -21,39 +21,52 @@ const QRCodeGenerator: Component = () => {
   const [isCountLoading, setIsCountLoading] = createSignal(false);
   const [inputType, setInputType] = createSignal("url");
 
-  const formatQRData = (inputData: any) => {
+  const formatQRData = (inputData: any): QRFormatResult | null => {
+    let formattedData;
+    let qrType = QRCodeType.TXT;
+  
     switch (inputData.type) {
       case 'url':
-        return {
-          type: QRCodeType.TXT,
-          text: inputData.url
-        } as TextData;
-        
       case 'text':
-        return {
-          type: QRCodeType.TXT,
-          text: inputData.text
-        } as TextData;
+        formattedData = {
+          TextData: {
+            text: inputData.type === 'url' ? inputData.url : inputData.text
+          }
+        };
+        break;
         
       case 'wifi':
-        return {
-          type : QRCodeType.WIFI,
-          ssid: inputData.ssid,
-          password: inputData.password,
-          security: inputData.security
-        } as WiFiData;
+        qrType = QRCodeType.WIFI;
+        formattedData = {
+          WiFiData: {
+            ssid: inputData.ssid,
+            password: inputData.password,
+            security: inputData.security
+          }
+        };
+        break;
         
       case 'sms':
-        return {
-          type: QRCodeType.SMS,
-          phone: Number(inputData.phone.replace(/[^0-9]/g, "")),
-          message: inputData.message
-        } as SMSData;
+        qrType = QRCodeType.SMS;
+        formattedData = {
+          SMSData: {
+            phone: Number(inputData.phone.replace(/[^0-9]/g, "")),
+            message: inputData.message
+          }
+        };
+        break;
         
       default:
         return null;
     }
+  
+    return { formattedData, qrType } as QRFormatResult;
   };
+  
+  // Update interfaces to match the JSON structure
+  
+  
+  
 
   const handleInputChange = (data: any) => {
     setQrData(data);
@@ -68,7 +81,7 @@ const QRCodeGenerator: Component = () => {
 
     setIsLoading(true);
     try {
-      const resp = await qrCodeAPI.generateQRCode(formattedData, inputType());
+      const resp = await qrCodeAPI.generateQRCode(formattedData, formattedData.qrType);
       const imageUrl = URL.createObjectURL(resp);
       console.log("image url", imageUrl);
       setQrImage(imageUrl);
@@ -89,7 +102,7 @@ const QRCodeGenerator: Component = () => {
 
     try {
       const response = await axios.post(
-        `${API_URL}/qrcode/?qr_type=${formattedData.type}`, 
+        `${API_URL}/qrcode/?qr_type=${formattedData.qrType}`, 
         { data : formattedData },
         {
           params: { type: inputType() },
