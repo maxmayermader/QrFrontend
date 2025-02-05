@@ -4,7 +4,7 @@ import Spinner from "./components/spinner";
 import LoadingCounter from "./components/loading";
 import InputSelector from "./components/inputSelector";
 import AdvQrCode from "./components/advQrCode";
-import { Url, PlainText, Wifi, Sms, QRData, QRCodeType } from "./types/types";
+import {TextData, WiFiData, SMSData, QRCodeType } from "./types/types";
 import { qrCodeAPI } from './api/api';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -22,40 +22,34 @@ const QRCodeGenerator: Component = () => {
   const [inputType, setInputType] = createSignal("url");
 
   const formatQRData = (inputData: any) => {
-    console.log("input data", inputData);
     switch (inputData.type) {
       case 'url':
         return {
-          type: QRCodeType.TXT,  
-          data: {
-            name: "url",
-            text: inputData.url
-        }} as QRData;
+          type: QRCodeType.TXT,
+          text: inputData.url
+        } as TextData;
+        
       case 'text':
         return {
           type: QRCodeType.TXT,
-          data: {
-            name: "text",
-            text: inputData.text
-          }
-        } as QRData;
+          text: inputData.text
+        } as TextData;
+        
       case 'wifi':
         return {
-          type: QRCodeType.WIFI,  
-          data: {
-            name: "wifi",
-          security: inputData.security,
+          type : QRCodeType.WIFI,
           ssid: inputData.ssid,
-          password: inputData.password
-        }} as QRData;
+          password: inputData.password,
+          security: inputData.security
+        } as WiFiData;
+        
       case 'sms':
         return {
-          type: QRCodeType.SMS,  
-          data: {
-            name: "sms",
+          type: QRCodeType.SMS,
           phone: Number(inputData.phone.replace(/[^0-9]/g, "")),
           message: inputData.message
-        }} as QRData;
+        } as SMSData;
+        
       default:
         return null;
     }
@@ -96,7 +90,7 @@ const QRCodeGenerator: Component = () => {
     try {
       const response = await axios.post(
         `${API_URL}/qrcode/?qr_type=${formattedData.type}`, 
-        { data : formattedData.data },
+        { data : formattedData },
         {
           params: { type: inputType() },
           responseType: "blob",

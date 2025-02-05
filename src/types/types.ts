@@ -24,37 +24,27 @@ export type VCard = {
     country: string;
 }
   
-export type Url = {
-    name: string;
-    text: string;
-}
-
-export type PlainText = {
-    name: string;
-    text: string;
-}
-
-export type Wifi = {
-    name: "wifi";
-    security: string;
-    ssid: string;
-    password: string;
-}
-
-export type Sms = {
-    name: string
+  export interface SMSData {
+    type: number;
     phone: number;
     message: string;
-}
-
-export interface QRData {
+  }
+  
+  export interface TextData {
     type: number;
-    data: VCard | Url | PlainText | Wifi | Sms;
-}
+    text: string;
+  }
+  
+ export interface WiFiData {
+    type: number;
+    ssid: string;
+    password: string;
+    security: string;
+  }
 
 export interface AdvancedQRData {
     type: number;
-    data: VCard | Url | PlainText | Wifi | Sms;
+    data: VCard | TextData  | WiFiData | SMSData;
     fillColor: Array<number>;
     backColor: Array<number>;
     moduleShape: number;
