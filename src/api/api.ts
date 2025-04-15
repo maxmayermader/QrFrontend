@@ -1,6 +1,7 @@
 // api.ts
 import axios from 'axios';
 import { WiFiData, TextData, SMSData, VCard, QRFormatResult } from '../types/types';
+import { NextResponse } from 'next/server';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
