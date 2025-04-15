@@ -1,8 +1,11 @@
 // api.ts
 import axios from 'axios';
 import { WiFiData, TextData, SMSData, VCard, QRFormatResult } from '../types/types';
+import { NextResponse } from 'next/server';
+import { get } from '@vercel/edge-config';
 
 const API_URL = import.meta.env.VITE_API_URL;
+export const config = { matcher: '/count' };
 
 interface QRCodeResponse {
   data: Blob;
@@ -35,3 +38,10 @@ export const qrCodeAPI = {
     return response.data.data;
   }
 };
+
+export async function middleware() {
+  const greeting = await get('greeting');
+  // NextResponse.json requires at least Next v13.1 or
+  // enabling experimental.allowMiddlewareResponseBody in next.config.js
+  return NextResponse.json(greeting);
+}
