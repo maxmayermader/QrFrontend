@@ -163,6 +163,7 @@ const QRCodeGenerator: Component = () => {
   onMount(() => {
     fetchCount();
   });
+  
 
   return (
     <div class="w-full flex flex-col items-center gap-4 p-8 bg-gray-100 dark:bg-gray-800">
