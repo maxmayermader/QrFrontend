@@ -20,6 +20,14 @@ const QRCodeGenerator: Component = () => {
   const [count, setCount] = createSignal<number>(0);
   const [isCountLoading, setIsCountLoading] = createSignal(false);
   const [inputType, setInputType] = createSignal("url");
+  const [moduleShape, setModuleShape] = createSignal<number>(0);
+
+  const hexToRgb = (hex: string): number[] => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return [r, g, b];
+  };
 
   const formatQRData = (inputData: any): QRFormatResult | null => {
     let formattedData;
@@ -94,17 +102,43 @@ const QRCodeGenerator: Component = () => {
       setError("Please enter required information");
       return;
     }
-
+  
     try {
+      // Convert colors to RGB arrays
+      const fillRgb = hexToRgb(fillColor());
+      const backRgb = hexToRgb(backgroundColor());
+  
+      // Build data payload based on QR type
+      let dataPayload = {};
+      switch (formattedData.qrType) {
+        case QRCodeType.TXT:
+          dataPayload = { text: formattedData.formattedData.TextData?.text };
+          break;
+        case QRCodeType.WIFI:
+          dataPayload = { wifi: formattedData.formattedData.WiFiData };
+          break;
+        case QRCodeType.SMS:
+          dataPayload = { sms: formattedData.formattedData.SMSData };
+          break;
+        default:
+          throw new Error("Unsupported QR type");
+      }
+  
+      // Create request body with advanced options
+      const requestBody = {
+        ...dataPayload,
+        fillColor: fillRgb,
+        backColor: backRgb,
+        moduleShape: moduleShape(),
+      };
+  
+      // Send to advanced endpoint
       const response = await axios.post(
-        `${API_URL}/qrcode/?qr_type=${formattedData.qrType}`, 
-        { data : formattedData },
-        {
-          params: { type: inputType() },
-          responseType: "blob",
-        }
+        `${API_URL}/qrcode/advanced`,
+        requestBody,
+        { responseType: "blob" }
       );
-
+  
       const imageUrl = URL.createObjectURL(response.data);
       setQrImage(imageUrl);
       setError("");
@@ -146,14 +180,16 @@ const QRCodeGenerator: Component = () => {
       </button>
 
       <Show when={showAdvanced()}>
-        <AdvQrCode
-          showAdvanced={showAdvanced()}
-          fillColor={fillColor()}
-          backgroundColor={backgroundColor()}
-          setFillColor={setFillColor}
-          setBackgroundColor={setBackgroundColor}
-          generateAdvancedQRCode={generateAdvancedQRCode}
-        />
+      <AdvQrCode
+  showAdvanced={showAdvanced()}
+  fillColor={fillColor()}
+  backgroundColor={backgroundColor()}
+  setFillColor={setFillColor}
+  setBackgroundColor={setBackgroundColor}
+  generateAdvancedQRCode={generateAdvancedQRCode}
+  moduleShape={moduleShape()}
+  setModuleShape={setModuleShape}
+/>
       </Show>
 
       <Show when={!showAdvanced()}>
