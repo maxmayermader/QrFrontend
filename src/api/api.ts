@@ -36,5 +36,3 @@ export const qrCodeAPI = {
     return response.data.data;
   }
 };
-
-

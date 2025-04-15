@@ -21,8 +21,6 @@ const QRCodeGenerator: Component = () => {
   const [isCountLoading, setIsCountLoading] = createSignal(false);
   const [inputType, setInputType] = createSignal("url");
 
-  // console.log("mid", middleware())
-
   const formatQRData = (inputData: any): QRFormatResult | null => {
     let formattedData;
     let qrType = QRCodeType.TXT;
@@ -65,11 +63,6 @@ const QRCodeGenerator: Component = () => {
     return { formattedData, qrType } as QRFormatResult;
   };
   
-  // Update interfaces to match the JSON structure
-  
-  
-  
-
   const handleInputChange = (data: any) => {
     setQrData(data);
   };
