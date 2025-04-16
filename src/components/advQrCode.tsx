@@ -56,7 +56,7 @@ const AdvQrCode: Component<{
             class={`flex-1 py-2 px-4 rounded-md transition-colors ${
               props.moduleShape === 0
                 ? "bg-blue-500 text-white"
-                : "bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
+                : "bg-gray-500 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
             }`}
           >
             Normal
@@ -66,20 +66,20 @@ const AdvQrCode: Component<{
             class={`flex-1 py-2 px-4 rounded-md transition-colors ${
               props.moduleShape === 1
                 ? "bg-blue-500 text-white"
-                : "bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
+                : "bg-gray-500 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
             }`}
           >
-            Rounded
+            Dots
           </button>
           <button
             onClick={() => props.setModuleShape(2)}
             class={`flex-1 py-2 px-4 rounded-md transition-colors ${
               props.moduleShape === 2
                 ? "bg-blue-500 text-white"
-                : "bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
+                : "bg-gray-500 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
             }`}
           >
-            Dots
+            Rounded
           </button>
         </div>
       </div>
