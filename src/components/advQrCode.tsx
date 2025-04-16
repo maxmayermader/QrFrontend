@@ -69,7 +69,7 @@ const AdvQrCode: Component<{
                 : "bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
             }`}
           >
-            Rounded
+            Dots
           </button>
           <button
             onClick={() => props.setModuleShape(2)}
@@ -79,7 +79,7 @@ const AdvQrCode: Component<{
                 : "bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
             }`}
           >
-            Dots
+            Rounded
           </button>
         </div>
       </div>
