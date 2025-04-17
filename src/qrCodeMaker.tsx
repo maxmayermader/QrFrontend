@@ -93,6 +93,7 @@ const QRCodeGenerator: Component = () => {
       setError("Failed to generate QR code");
     } finally {
       setIsLoading(false);
+      fetchCount();
     }
   };
 
